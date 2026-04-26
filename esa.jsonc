@@ -1,0 +1,6 @@
+{
+  "entry": "./src/index.ts",
+  "assets": {
+    "directory": "./dist",
+  },
+}

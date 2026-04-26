@@ -1,0 +1,156 @@
+---
+const rawDomain = import.meta.env.PUBLIC_PROXY_DOMAIN ?? "";
+const normalizedDomain = rawDomain.trim().replace(/\/+$/, "");
+const hasDomain = normalizedDomain.length > 0;
+const displayDomain = hasDomain ? normalizedDomain : "https://<proxy-domain>";
+
+const mcArgs = [
+  `-Dminecraft.api.auth.host=${displayDomain}/auth`,
+  `-Dminecraft.api.account.host=${displayDomain}/account`,
+  `-Dminecraft.api.session.host=${displayDomain}/session`,
+  `-Dminecraft.api.services.host=${displayDomain}/services`,
+  `-Dminecraft.api.profiles.host=${displayDomain}/profiles`,
+];
+
+const velocityArg = `-Dmojang.sessionserver=${displayDomain}/session/session/minecraft/hasJoined`;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minecraft API 转发参数教程</title>
+    <style>
+      :root {
+        --bg: #f4f6f8;
+        --panel: #ffffff;
+        --text: #182430;
+        --muted: #5a6a78;
+        --accent: #0b8f6f;
+        --warn-bg: #fff4d6;
+        --warn-border: #f1ce74;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top right, #d8efe8 0%, transparent 42%),
+          linear-gradient(180deg, #eef3f6 0%, var(--bg) 100%);
+      }
+
+      main {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 40px 18px 72px;
+      }
+
+      .card {
+        background: var(--panel);
+        border-radius: 14px;
+        padding: 28px 24px;
+        box-shadow: 0 10px 35px rgba(14, 36, 55, 0.08);
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+      }
+
+      h2 {
+        margin-top: 28px;
+        font-size: 22px;
+      }
+
+      p {
+        line-height: 1.7;
+      }
+
+      pre {
+        margin: 12px 0 0;
+        overflow-x: auto;
+        padding: 14px;
+        border-radius: 10px;
+        border: 1px solid #d7dee5;
+        background: #f8fafb;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      code {
+        font-family: "SF Mono", Menlo, Monaco, Consolas, monospace;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .warn {
+        margin-top: 14px;
+        padding: 12px 14px;
+        border: 1px solid var(--warn-border);
+        border-radius: 10px;
+        background: var(--warn-bg);
+      }
+
+      a {
+        color: var(--accent);
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <article class="card">
+        <h1>Minecraft API 转发参数教程</h1>
+        <p class="muted">
+          仅需在启动命令里把参数放到 <code>-jar</code> 之前，无需修改游戏。
+        </p>
+
+        {
+          !hasDomain && (
+            <div class="warn">
+              未设置 `PUBLIC_PROXY_DOMAIN`，当前页面使用占位符
+              `https://&lt;proxy-domain&gt;` 展示。
+              <br />
+              构建前请在环境变量中设置该值，例如：
+              <code>PUBLIC_PROXY_DOMAIN=https://msp.example.com</code>
+            </div>
+          )
+        }
+
+        <h2>Minecraft 服务端 / 客户端</h2>
+        <p>多行版本</p>
+        <pre><code>{mcArgs.join("\n")}</code></pre>
+
+        <p>一行版本（空格分隔）</p>
+        <pre><code>{mcArgs.join(" ")}</code></pre>
+
+        <p>
+          适用于 MC 1.16+，也大概率适用于 Paper 等非原版端。即使高版本基本不用
+          `auth`，低版本仍建议带上，确保整套转发配置生效。
+        </p>
+
+        <p>
+          如果是 1.14 / 1.15 客户端，可尝试此 Backport 模组：
+          <a href="https://github.com/Fallen-Breath/AuthlibEnvBackport"
+            >AuthlibEnvBackport</a
+          >
+        </p>
+
+        <h2>Velocity</h2>
+        <p>
+          仅需在启动 Velocity 的命令行参数里，在 <code>-jar</code> 参数前加入以下参数：
+        </p>
+        <pre><code>{velocityArg}</code></pre>
+      </article>
+    </main>
+  </body>
+</html>
